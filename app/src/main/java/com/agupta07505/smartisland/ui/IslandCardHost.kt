@@ -47,6 +47,7 @@ internal fun ExpandedCardHost(
     prewarmWanted: Boolean,
     launcherApps: List<LaunchableApp>?,
     launcherOpen: Boolean = false,
+    nochiFaceOpen: Boolean = false,
     selectedIndex: Int,
     onPageSelected: (Int) -> Unit,
     onOpenNotification: (IslandNotification) -> Unit,
@@ -266,6 +267,7 @@ internal fun ExpandedCardHost(
             IslandExpandedContent(
                 notifications = hostNotifications,
                 launcherApps = launcherApps,
+                nochiFaceOpen = nochiFaceOpen,
                 selectedIndex = hostSelectedIndex,
                 // A waiting card must not touch the selection or the auto-collapse timer.
                 onPageSelected = { index -> if (cardLiveNow) onPageSelected(index) },

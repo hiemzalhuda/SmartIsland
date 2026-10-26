@@ -46,7 +46,9 @@ private enum class NochiMood { Normal, Happy, Squint }
 @Composable
 internal fun NochiEyes(
     modifier: Modifier = Modifier,
-    compact: Boolean = false
+    compact: Boolean = false,
+    /** Fork hiemz: gap between the inner edges of the two eyes, in dp (portrait pill only). */
+    gapDp: Float = 24f
 ) {
     val animationsOff = SystemAnimScale.animationsOff()
     var blinking by remember { mutableStateOf(false) }
@@ -97,16 +99,27 @@ internal fun NochiEyes(
     }
 
     // Compact (landscape circle, 26 dp) must fit inside the circle.
-    val totalWidth = if (compact) 24.dp else 76.dp
+    // Portrait: the canvas grows with the gap so the hole fits between the eyes.
+    val eyeWPortrait = 20.dp
+    val eyeMarginPortrait = 6.dp
+    val totalWidth = if (compact) 24.dp else (gapDp + 2 * eyeWPortrait.value + 2 * eyeMarginPortrait.value).dp
     val totalHeight = if (compact) 12.dp else 26.dp
     Canvas(modifier = modifier.size(totalWidth, totalHeight)) {
-        val eyeW = if (compact) 11.dp.toPx() else 20.dp.toPx()
+        val eyeW = if (compact) 11.dp.toPx() else eyeWPortrait.toPx()
         val eyeHFull = if (compact) 12.dp.toPx() else 22.dp.toPx()
         val pupilR = if (compact) 2.5.dp.toPx() else 4.5.dp.toPx()
-        val centers = listOf(
-            Offset(size.width * 0.28f, size.height / 2f),
-            Offset(size.width * 0.72f, size.height / 2f)
-        )
+        val centers = if (compact) {
+            listOf(
+                Offset(size.width * 0.28f, size.height / 2f),
+                Offset(size.width * 0.72f, size.height / 2f)
+            )
+        } else {
+            val margin = eyeMarginPortrait.toPx()
+            listOf(
+                Offset(margin + eyeW / 2f, size.height / 2f),
+                Offset(size.width - margin - eyeW / 2f, size.height / 2f)
+            )
+        }
         for (center in centers) {
             if (mood == NochiMood.Happy) {
                 // Upper-half arc: ^^

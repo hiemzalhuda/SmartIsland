@@ -99,8 +99,11 @@ fun IslandOverlayView(
     landscapeDot: com.agupta07505.smartisland.model.IdleDotGeometry? = null,
     widgetPill: Boolean = false,
     onIdleDotTap: () -> Unit = {},
+    onNochiFaceTap: () -> Unit = {},
     onOpenAppsLauncher: () -> Unit = {},
     idleClosing: Boolean = false,
+    /** The expanded island shows the interactive Nochi face (tap on the idle eyes) with no card: not a "last card gone" close. */
+    nochiFaceOpen: Boolean = false,
     /** The expanded island shows the quick-launch grid (Open Apps shortcut) with no card: not a "last card gone" close. */
     appsLauncherOpen: Boolean = false,
     idleLeaving: Boolean = false,
@@ -118,6 +121,7 @@ fun IslandOverlayView(
         onExpandedSurfaceBounds = onExpandedSurfaceBounds,
         onRevealIdleCards = onRevealIdleCards,
         onIdleDotTap = onIdleDotTap,
+        onNochiFaceTap = onNochiFaceTap,
         onOpenAppsLauncher = onOpenAppsLauncher,
         onTogglePillHidden = onTogglePillHidden,
         onDismissNotification = onDismissNotification,
@@ -492,6 +496,7 @@ fun IslandOverlayView(
                 prewarmWanted = prewarmWanted,
                 launcherApps = launcherApps,
                 launcherOpen = appsLauncherOpen,
+                nochiFaceOpen = nochiFaceOpen,
                 selectedIndex = selectedIndex,
                 onPageSelected = onPageSelected,
                 onOpenNotification = onOpenNotification,

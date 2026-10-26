@@ -22,6 +22,7 @@ internal class IslandCallbacks(
     private val onExpandedSurfaceBounds: State<(android.graphics.Rect?) -> Unit>,
     private val onRevealIdleCards: State<() -> Unit>,
     private val onIdleDotTap: State<() -> Unit>,
+    private val onNochiFaceTap: State<() -> Unit>,
     private val onOpenAppsLauncher: State<() -> Unit>,
     private val onTogglePillHidden: State<() -> Unit>,
     private val onDismiss: State<() -> Unit>,
@@ -51,6 +52,7 @@ internal class IslandCallbacks(
     val currentOnExpandedSurfaceBounds: (android.graphics.Rect?) -> Unit get() = onExpandedSurfaceBounds.value
     val currentOnRevealIdleCards: () -> Unit get() = onRevealIdleCards.value
     val currentOnIdleDotTap: () -> Unit get() = onIdleDotTap.value
+    val currentOnNochiFaceTap: () -> Unit get() = onNochiFaceTap.value
     val currentOnOpenAppsLauncher: () -> Unit get() = onOpenAppsLauncher.value
     val currentOnTogglePillHidden: () -> Unit get() = onTogglePillHidden.value
     val currentOnDismiss: () -> Unit get() = onDismiss.value
@@ -83,6 +85,7 @@ internal fun rememberIslandCallbacks(
     onExpandedSurfaceBounds: (android.graphics.Rect?) -> Unit,
     onRevealIdleCards: () -> Unit,
     onIdleDotTap: () -> Unit,
+    onNochiFaceTap: () -> Unit,
     onOpenAppsLauncher: () -> Unit,
     onTogglePillHidden: () -> Unit,
     onDismissNotification: () -> Unit,
@@ -112,6 +115,7 @@ internal fun rememberIslandCallbacks(
     val onExpandedSurfaceBoundsState = rememberUpdatedState(onExpandedSurfaceBounds)
     val onRevealIdleCardsState = rememberUpdatedState(onRevealIdleCards)
     val onIdleDotTapState = rememberUpdatedState(onIdleDotTap)
+    val onNochiFaceTapState = rememberUpdatedState(onNochiFaceTap)
     val onOpenAppsLauncherState = rememberUpdatedState(onOpenAppsLauncher)
     val onTogglePillHiddenState = rememberUpdatedState(onTogglePillHidden)
     val onDismissState = rememberUpdatedState(onDismissNotification)
@@ -142,6 +146,7 @@ internal fun rememberIslandCallbacks(
             onExpandedSurfaceBounds = onExpandedSurfaceBoundsState,
             onRevealIdleCards = onRevealIdleCardsState,
             onIdleDotTap = onIdleDotTapState,
+            onNochiFaceTap = onNochiFaceTapState,
             onOpenAppsLauncher = onOpenAppsLauncherState,
             onTogglePillHidden = onTogglePillHiddenState,
             onDismiss = onDismissState,

@@ -1008,12 +1008,12 @@ class IslandViewModel(
             runSuspendCatchingLogged(TAG, "Empty-island guard failed") {
                 // Safety net: an expanded island with nothing to show closes. The short wait lets a card that was
                 // just posted reach the visible list first (the auto-expand path sets `expanded` a moment before it).
-                combine(expanded, visibleNotifications, appsLauncherOpen) { open, list, apps -> open && list.isEmpty() && !apps }
+                combine(expanded, visibleNotifications, appsLauncherOpen, nochiFaceOpen) { open, list, apps, face -> open && list.isEmpty() && !apps && !face }
                     .distinctUntilChanged()
                     .collectLatest { emptyOpen ->
                         if (!emptyOpen) return@collectLatest
                         kotlinx.coroutines.delay(EMPTY_ISLAND_GRACE_MS)
-                        if (expanded.value && visibleNotifications.value.isEmpty() && !appsLauncherOpen.value) {
+                        if (expanded.value && visibleNotifications.value.isEmpty() && !appsLauncherOpen.value && !nochiFaceOpen.value) {
                             com.agupta07505.smartisland.util.AppLogRecorder.i(TAG, "Empty expanded island closed: no card to show")
                             collapse()
                         }
@@ -1198,6 +1198,21 @@ class IslandViewModel(
         expanded.value = true
     }
 
+    /** Fork hiemz: the interactive Nochi face is open (tap on the idle eyes, portrait, empty island). */
+    val nochiFaceOpen = MutableStateFlow(false)
+
+    /** Fork hiemz: tap on the idle Nochi eyes: expands the island onto the interactive face. */
+    fun openNochiFace() {
+        if (!settings.value.idleEyesEnabled || shadeOpen.value || expanded.value) return
+        if (exemptionNow() != ExemptMode.None || widgetIslandHolds()) return
+        nochiFaceOpen.value = true
+        expanded.value = true
+    }
+
+    fun setNochiFaceOpen(open: Boolean) {
+        nochiFaceOpen.value = open
+    }
+
     fun expand() {
         // Never open under the shade: the visible list is empty there, so the island would be empty.
         if (shadeOpen.value) return
@@ -1256,6 +1271,7 @@ class IslandViewModel(
     fun collapse() {
         keepEmptyPillAfterLauncher()
         appsLauncherOpen.value = false
+        nochiFaceOpen.value = false
         outsideCloseJob?.cancel()
         outsideCloseJob = null
         isInputActive.value = false
@@ -1283,6 +1299,7 @@ class IslandViewModel(
         if (expanded.value) {
             keepEmptyPillAfterLauncher()
             appsLauncherOpen.value = false
+            nochiFaceOpen.value = false
         }
         // A tap that closes the open island is what "off after tap to close" waits for; opening it again brings the widgets back.
         _idleClosedByTap.value = expanded.value

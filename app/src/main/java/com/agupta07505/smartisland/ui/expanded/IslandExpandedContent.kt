@@ -112,6 +112,7 @@ internal class PagerSyncState {
 fun IslandExpandedContent(
     notifications: List<IslandNotification>,
     launcherApps: List<LaunchableApp>?,
+    nochiFaceOpen: Boolean = false,
     selectedIndex: Int,
     onPageSelected: (Int) -> Unit,
     onOpenNotification: (IslandNotification) -> Unit,
@@ -142,6 +143,26 @@ fun IslandExpandedContent(
     heightCache: CardHeightCache? = null
 ) {
     if (notifications.isEmpty()) {
+        // Fork hiemz: the interactive Nochi face, opened by tapping the idle eyes. It is
+        // not an app shortcut, so it shows even when shortcuts are off.
+        if (nochiFaceOpen) {
+            val density = LocalDensity.current
+            Box(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(unbounded = true)
+                    .onSizeChanged {
+                        val measuredHeight = with(density) { it.height.toDp() }
+                        if (measuredHeight > 0.dp) {
+                            val clamped = measuredHeight.coerceIn(80.dp, 300.dp)
+                            onHeightMeasured(clamped)
+                        }
+                    }
+            ) {
+                NochiFaceExpanded(onCollapse = onCollapse)
+            }
+            return
+        }
         if (!settings.enableAppShortcuts) {
             return
         }

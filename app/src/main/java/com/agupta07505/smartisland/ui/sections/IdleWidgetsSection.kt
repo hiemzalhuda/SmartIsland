@@ -40,6 +40,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -168,7 +169,36 @@ fun IdleWidgetsSection(
                         .padding(vertical = 6.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    com.agupta07505.smartisland.ui.NochiEyes()
+                    com.agupta07505.smartisland.ui.NochiEyes(gapDp = settings.nochiEyeGapDp)
+                }
+                // Fork hiemz: eye-gap slider. The pill's camera hole must fit between the
+                // eyes, or it cuts into their inner edges (Pixel 7a hole is ~20 dp).
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "Eye gap",
+                            style = MaterialTheme.typography.bodySmall,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = "${settings.nochiEyeGapDp.toInt()} dp",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                    Slider(
+                        value = settings.nochiEyeGapDp,
+                        onValueChange = { scope.launch { repository.setNochiEyeGapDp(it) } },
+                        valueRange = 8f..40f,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Text(
+                        text = "Space between the eyes, so the camera hole fits between them instead of cutting into them.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
 

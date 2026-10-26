@@ -168,6 +168,7 @@ class SmartIslandSettingsRepository(private val context: Context) {
         val IdleEyesEnabled = booleanPreferencesKey("idle_eyes_enabled")
         val UnreadReminderEnabled = booleanPreferencesKey("unread_reminder_enabled")
         val PileupSummaryEnabled = booleanPreferencesKey("pileup_summary_enabled")
+        val NochiEyeGapDp = floatPreferencesKey("nochi_eye_gap_dp")
         val IdleWidgetsEnabledLandscape = booleanPreferencesKey("idle_widgets_enabled_landscape")
         val IdleOffAfterTapClose = booleanPreferencesKey("idle_off_after_tap_close")
         val IdleOffAfterTapCloseLandscape = booleanPreferencesKey("idle_off_after_tap_close_landscape")
@@ -486,6 +487,8 @@ class SmartIslandSettingsRepository(private val context: Context) {
                 idleEyesEnabled = prefs[Keys.IdleEyesEnabled] ?: defaults.idleEyesEnabled,
                 unreadReminderEnabled = prefs[Keys.UnreadReminderEnabled] ?: defaults.unreadReminderEnabled,
                 pileupSummaryEnabled = prefs[Keys.PileupSummaryEnabled] ?: defaults.pileupSummaryEnabled,
+                nochiEyeGapDp = (prefs[Keys.NochiEyeGapDp] ?: defaults.nochiEyeGapDp)
+                    .coerceIn(SmartIslandSettings.MIN_NOCHI_EYE_GAP_DP, SmartIslandSettings.MAX_NOCHI_EYE_GAP_DP),
                 // Installs from before the per-orientation switch start landscape from the one they had.
                 idleWidgetsEnabledLandscape = prefs[Keys.IdleWidgetsEnabledLandscape]
                     ?: prefs[Keys.IdleWidgetsEnabled] ?: defaults.idleWidgetsEnabledLandscape,
@@ -1037,6 +1040,7 @@ class SmartIslandSettingsRepository(private val context: Context) {
     suspend fun setIdleEyesEnabled(value: Boolean) = editSafely { it[Keys.IdleEyesEnabled] = value }
     suspend fun setUnreadReminderEnabled(value: Boolean) = editSafely { it[Keys.UnreadReminderEnabled] = value }
     suspend fun setPileupSummaryEnabled(value: Boolean) = editSafely { it[Keys.PileupSummaryEnabled] = value }
+    suspend fun setNochiEyeGapDp(value: Float) = editSafely { it[Keys.NochiEyeGapDp] = value }
     suspend fun setIdleWidgetsEnabledLandscape(value: Boolean) = editSafely { it[Keys.IdleWidgetsEnabledLandscape] = value }
     suspend fun setIdleOffAfterTapClose(landscape: Boolean, value: Boolean) = editSafely {
         it[if (landscape) Keys.IdleOffAfterTapCloseLandscape else Keys.IdleOffAfterTapClose] = value
@@ -1582,6 +1586,7 @@ class SmartIslandSettingsRepository(private val context: Context) {
         prefs[Keys.IdleEyesEnabled] = settings.idleEyesEnabled
         prefs[Keys.UnreadReminderEnabled] = settings.unreadReminderEnabled
         prefs[Keys.PileupSummaryEnabled] = settings.pileupSummaryEnabled
+        prefs[Keys.NochiEyeGapDp] = settings.nochiEyeGapDp
         prefs[Keys.IdleWidgetsEnabledLandscape] = settings.idleWidgetsEnabledLandscape
         prefs[Keys.IdleOffAfterTapClose] = settings.idleOffAfterTapClose
         prefs[Keys.IdleOffAfterTapCloseLandscape] = settings.idleOffAfterTapCloseLandscape

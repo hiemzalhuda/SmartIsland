@@ -231,6 +231,12 @@ data class SmartIslandSettings(
      */
     val pileupSummaryEnabled: Boolean = true,
     /**
+     * Fork hiemz: gap between the inner edges of the two Nochi idle eyes, in dp. The Pixel 7a
+     * camera hole (~20 dp) needs a gap wider than itself, or the hole eats the eyes' inner edges.
+     * Tunable from Layout > Idle widgets; default 24 dp.
+     */
+    val nochiEyeGapDp: Float = 24f,
+    /**
      * The landscape profile's own on / off switch (the portrait one is [idleWidgetsEnabled]). Old installs start from
      * the portrait value.
      */
@@ -597,6 +603,7 @@ data class SmartIslandSettings(
         settingsObj.put("idleEyesEnabled", idleEyesEnabled)
         settingsObj.put("unreadReminderEnabled", unreadReminderEnabled)
         settingsObj.put("pileupSummaryEnabled", pileupSummaryEnabled)
+        settingsObj.put("nochiEyeGapDp", nochiEyeGapDp.toDouble())
         settingsObj.put("idleWidgetsEnabledLandscape", idleWidgetsEnabledLandscape)
         settingsObj.put("idleOffAfterTapClose", idleOffAfterTapClose)
         settingsObj.put("idleOffAfterTapCloseLandscape", idleOffAfterTapCloseLandscape)
@@ -807,6 +814,8 @@ data class SmartIslandSettings(
         const val DEFAULT_CONTENT_PILL_PERCENT = 110f
         const val MIN_WIDTH = 76f
         const val MAX_WIDTH = 180f
+        const val MIN_NOCHI_EYE_GAP_DP = 8f
+        const val MAX_NOCHI_EYE_GAP_DP = 40f
         const val MIN_HEIGHT = 24f
         const val MAX_HEIGHT = 60f
         const val MIN_CUTOUT_WIDTH = 12f
@@ -1049,6 +1058,7 @@ data class SmartIslandSettings(
                 idleEyesEnabled = obj.optBoolean("idleEyesEnabled", defaults.idleEyesEnabled),
                 unreadReminderEnabled = obj.optBoolean("unreadReminderEnabled", defaults.unreadReminderEnabled),
                 pileupSummaryEnabled = obj.optBoolean("pileupSummaryEnabled", defaults.pileupSummaryEnabled),
+                nochiEyeGapDp = safeFloat("nochiEyeGapDp", defaults.nochiEyeGapDp, MIN_NOCHI_EYE_GAP_DP, MAX_NOCHI_EYE_GAP_DP),
                 idleWidgetsEnabledLandscape = obj.optBoolean(
                     "idleWidgetsEnabledLandscape",
                     obj.optBoolean("idleWidgetsEnabled", defaults.idleWidgetsEnabledLandscape)

@@ -387,6 +387,11 @@ internal fun Modifier.islandMainGestures(
                                         if (settings.autoHidePill && ui.isAutoHidden) {
                                             ui.isAutoHidden = false
                                             ui.touch()
+                                        } else if (!isLandscape && settings.idleEyesEnabled && cb.currentNotifications.isEmpty()) {
+                                            // Fork hiemz: tap on the idle Nochi eyes drops the island down
+                                            // into the interactive face. (Widget taps are off while the eyes
+                                            // replace the idle widget slots.)
+                                            cb.currentOnNochiFaceTap()
                                         } else if (widgetTap == WidgetTapAction.GlyphTap && ui.onWidgetGlyphTap != null) {
                                             // Idle widget pill, glyph slot: opens the semi-expanded widget island, or
                                             // closes it when it is open.

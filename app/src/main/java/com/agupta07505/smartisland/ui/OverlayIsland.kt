@@ -40,6 +40,7 @@ fun OverlayIsland(
     val widgetIslandOpen by viewModel.widgetIslandOpen.collectAsState()
     val widgetIslandSnap by viewModel.widgetIslandSnap.collectAsState()
     val appsLauncherOpen by viewModel.appsLauncherOpen.collectAsState()
+    val nochiFaceOpen by viewModel.nochiFaceOpen.collectAsState()
     val notifications by viewModel.visibleNotifications.collectAsState()
     val selectedIndex by viewModel.selectedIndex.collectAsState()
     val isLocked by viewModel.isLocked.collectAsState()
@@ -258,11 +259,13 @@ fun OverlayIsland(
         // One tick when the tap did something (a glyph-free pill centre or the landscape idle circle), none when it did nothing:
         // that tells the owner whether the tap counted.
         onOpenAppsLauncher = { viewModel.openAppsLauncher() },
+        onNochiFaceTap = { viewModel.openNochiFace() },
         onIdleDotTap = {
             if (viewModel.onIdleDotTapped() != com.agupta07505.smartisland.model.IdleDotTap.None) stepTapHaptic()
         },
         idleClosing = idleClosing,
         appsLauncherOpen = appsLauncherOpen && expanded,
+        nochiFaceOpen = nochiFaceOpen && expanded,
         idleLeaving = idleLeaving,
         widgetIslandOpen = widgetIslandOpen && !quiet,
         onWidgetIslandChange = { viewModel.setWidgetIslandOpen(it) },

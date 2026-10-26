@@ -346,7 +346,7 @@ fun IslandCollapsedContent(
         if (mode == IslandMode.Empty) {
             Box(modifier = Modifier.align(Alignment.Center)) {
                 if (settings.idleEyesEnabled) {
-                    NochiEyes(compact = settings.width <= IDLE_WIDGET_COMPACT_MAX_DP)
+                    NochiEyes(compact = settings.width <= IDLE_WIDGET_COMPACT_MAX_DP, gapDp = settings.nochiEyeGapDp)
                 } else {
                     IdleWidgetCompact(idleWidget)
                 }

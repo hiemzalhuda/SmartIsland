@@ -39,6 +39,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -130,6 +131,45 @@ fun IdleWidgetsSection(
 
             OutlinedButton(onClick = onOpenSettings, modifier = Modifier.fillMaxWidth()) {
                 Text(stringResource(R.string.idle_widgets_open_settings))
+            }
+
+            // Fork hiemz: Nochi-style idle eyes on the pill while no card
+            // is on it. Replaces the idle widget content when on.
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Nochi eyes (idle)",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = "Eyes on the idle pill, like tini's Nochi: blinking, glancing sideways, occasionally smiling or squinting. Off restores the idle widgets.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Switch(
+                    checked = settings.idleEyesEnabled,
+                    onCheckedChange = { scope.launch { repository.setIdleEyesEnabled(it) } }
+                )
+            }
+            if (settings.idleEyesEnabled) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(Color.Black)
+                        .padding(vertical = 6.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    com.agupta07505.smartisland.ui.NochiEyes()
+                }
             }
 
             if (anyEnabled) {

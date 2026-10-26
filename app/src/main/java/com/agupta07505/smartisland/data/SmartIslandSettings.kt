@@ -213,6 +213,12 @@ data class SmartIslandSettings(
     val transferExpiryMinutes: Int = DEFAULT_TRANSFER_EXPIRY_MINUTES,
     val idleWidgetsEnabled: Boolean = false,
     /**
+     * Fork hiemz: Nochi-style idle eyes on the collapsed pill while no card
+     * is on the island. When on, the eyes replace the idle widget content
+     * (they do not need idle widgets to be enabled). Default on in this fork.
+     */
+    val idleEyesEnabled: Boolean = true,
+    /**
      * The landscape profile's own on / off switch (the portrait one is [idleWidgetsEnabled]). Old installs start from
      * the portrait value.
      */
@@ -576,6 +582,7 @@ data class SmartIslandSettings(
         settingsObj.put("secondaryMergeMs", secondaryMergeMs)
         settingsObj.put("transferExpiryMinutes", transferExpiryMinutes)
         settingsObj.put("idleWidgetsEnabled", idleWidgetsEnabled)
+        settingsObj.put("idleEyesEnabled", idleEyesEnabled)
         settingsObj.put("idleWidgetsEnabledLandscape", idleWidgetsEnabledLandscape)
         settingsObj.put("idleOffAfterTapClose", idleOffAfterTapClose)
         settingsObj.put("idleOffAfterTapCloseLandscape", idleOffAfterTapCloseLandscape)
@@ -1025,6 +1032,7 @@ data class SmartIslandSettings(
                 transferExpiryMinutes = obj.optInt("transferExpiryMinutes", defaults.transferExpiryMinutes)
                     .coerceIn(0, MAX_TRANSFER_EXPIRY_MINUTES),
                 idleWidgetsEnabled = obj.optBoolean("idleWidgetsEnabled", defaults.idleWidgetsEnabled),
+                idleEyesEnabled = obj.optBoolean("idleEyesEnabled", defaults.idleEyesEnabled),
                 idleWidgetsEnabledLandscape = obj.optBoolean(
                     "idleWidgetsEnabledLandscape",
                     obj.optBoolean("idleWidgetsEnabled", defaults.idleWidgetsEnabledLandscape)

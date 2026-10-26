@@ -165,6 +165,7 @@ class SmartIslandSettingsRepository(private val context: Context) {
         val PopupMs = intPreferencesKey("popup_ms")
         val TransferExpiryMinutes = intPreferencesKey("transfer_expiry_minutes")
         val IdleWidgetsEnabled = booleanPreferencesKey("idle_widgets_enabled")
+        val IdleEyesEnabled = booleanPreferencesKey("idle_eyes_enabled")
         val IdleWidgetsEnabledLandscape = booleanPreferencesKey("idle_widgets_enabled_landscape")
         val IdleOffAfterTapClose = booleanPreferencesKey("idle_off_after_tap_close")
         val IdleOffAfterTapCloseLandscape = booleanPreferencesKey("idle_off_after_tap_close_landscape")
@@ -480,6 +481,7 @@ class SmartIslandSettingsRepository(private val context: Context) {
                 transferExpiryMinutes = (prefs[Keys.TransferExpiryMinutes] ?: defaults.transferExpiryMinutes)
                     .coerceIn(0, SmartIslandSettings.MAX_TRANSFER_EXPIRY_MINUTES),
                 idleWidgetsEnabled = prefs[Keys.IdleWidgetsEnabled] ?: defaults.idleWidgetsEnabled,
+                idleEyesEnabled = prefs[Keys.IdleEyesEnabled] ?: defaults.idleEyesEnabled,
                 // Installs from before the per-orientation switch start landscape from the one they had.
                 idleWidgetsEnabledLandscape = prefs[Keys.IdleWidgetsEnabledLandscape]
                     ?: prefs[Keys.IdleWidgetsEnabled] ?: defaults.idleWidgetsEnabledLandscape,
@@ -1028,6 +1030,7 @@ class SmartIslandSettingsRepository(private val context: Context) {
         it[Keys.TransferExpiryMinutes] = d.transferExpiryMinutes
     }
     suspend fun setIdleWidgetsEnabled(value: Boolean) = editSafely { it[Keys.IdleWidgetsEnabled] = value }
+    suspend fun setIdleEyesEnabled(value: Boolean) = editSafely { it[Keys.IdleEyesEnabled] = value }
     suspend fun setIdleWidgetsEnabledLandscape(value: Boolean) = editSafely { it[Keys.IdleWidgetsEnabledLandscape] = value }
     suspend fun setIdleOffAfterTapClose(landscape: Boolean, value: Boolean) = editSafely {
         it[if (landscape) Keys.IdleOffAfterTapCloseLandscape else Keys.IdleOffAfterTapClose] = value
@@ -1570,6 +1573,7 @@ class SmartIslandSettingsRepository(private val context: Context) {
         prefs[Keys.TransferExpiryMinutes] = settings.transferExpiryMinutes
             .coerceIn(0, SmartIslandSettings.MAX_TRANSFER_EXPIRY_MINUTES)
         prefs[Keys.IdleWidgetsEnabled] = settings.idleWidgetsEnabled
+        prefs[Keys.IdleEyesEnabled] = settings.idleEyesEnabled
         prefs[Keys.IdleWidgetsEnabledLandscape] = settings.idleWidgetsEnabledLandscape
         prefs[Keys.IdleOffAfterTapClose] = settings.idleOffAfterTapClose
         prefs[Keys.IdleOffAfterTapCloseLandscape] = settings.idleOffAfterTapCloseLandscape

@@ -218,7 +218,8 @@ fun IslandCollapsedContent(
                 IslandMode.Stopwatch -> {
                     StopwatchCollapsedGlyph(notification = notification, settings = settings)
                 }
-                IslandMode.Empty -> IdleWidgetSlot(idleWidget, right = false)
+                // Fork hiemz: Nochi eyes replace the idle widget slots when on.
+                IslandMode.Empty -> if (!settings.idleEyesEnabled) IdleWidgetSlot(idleWidget, right = false)
             }
         }
 
@@ -309,14 +310,22 @@ fun IslandCollapsedContent(
                 IslandMode.Stopwatch -> {
                     StopwatchTimer(notification = notification, color = Color(settings.stopwatchColor))
                 }
-                IslandMode.Empty -> IdleWidgetSlot(idleWidget, right = true)
+                IslandMode.Empty -> if (!settings.idleEyesEnabled) IdleWidgetSlot(idleWidget, right = true)
             }
         }
         }
 
         // The small idle circle has no two sides: its one value sits in the middle.
+        // Fork hiemz: the Nochi eyes sit in the middle in both sizes; the
+        // idle widget slots above are already suppressed when eyes are on.
         if (mode == IslandMode.Empty) {
-            Box(modifier = Modifier.align(Alignment.Center)) { IdleWidgetCompact(idleWidget) }
+            Box(modifier = Modifier.align(Alignment.Center)) {
+                if (settings.idleEyesEnabled) {
+                    NochiEyes(compact = settings.width <= IDLE_WIDGET_COMPACT_MAX_DP)
+                } else {
+                    IdleWidgetCompact(idleWidget)
+                }
+            }
         }
     }
 }

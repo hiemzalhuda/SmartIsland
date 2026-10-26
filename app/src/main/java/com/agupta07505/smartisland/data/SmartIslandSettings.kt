@@ -60,7 +60,7 @@ data class SmartIslandSettings(
     val showLiveEventsInForeground: Boolean = false,
     val lockScreenPrivacy: String = "AppIconOnly",
     val showNotificationActions: Boolean = true,
-    val hideFromNotificationShade: Boolean = true,
+    val hideFromNotificationShade: Boolean = false,
     val liveActivitiesEnabled: Boolean = true,
     val navigationEnabled: Boolean = true,
     val disabledNotificationPackages: Set<String> = emptySet(),
@@ -218,6 +218,18 @@ data class SmartIslandSettings(
      * (they do not need idle widgets to be enabled). Default on in this fork.
      */
     val idleEyesEnabled: Boolean = true,
+    /**
+     * Fork hiemz: unread-message reminder. A counted message/mail that is still present after
+     * 15 minutes gets re-peeked once on the island, so an unread chat is not silently missed.
+     * Default on in this fork.
+     */
+    val unreadReminderEnabled: Boolean = true,
+    /**
+     * Fork hiemz: pile-up summary badge. When 2+ unread counted messages are present, the
+     * collapsed pill shows the total unread count badge instead of just the dot.
+     * Default on in this fork.
+     */
+    val pileupSummaryEnabled: Boolean = true,
     /**
      * The landscape profile's own on / off switch (the portrait one is [idleWidgetsEnabled]). Old installs start from
      * the portrait value.
@@ -583,6 +595,8 @@ data class SmartIslandSettings(
         settingsObj.put("transferExpiryMinutes", transferExpiryMinutes)
         settingsObj.put("idleWidgetsEnabled", idleWidgetsEnabled)
         settingsObj.put("idleEyesEnabled", idleEyesEnabled)
+        settingsObj.put("unreadReminderEnabled", unreadReminderEnabled)
+        settingsObj.put("pileupSummaryEnabled", pileupSummaryEnabled)
         settingsObj.put("idleWidgetsEnabledLandscape", idleWidgetsEnabledLandscape)
         settingsObj.put("idleOffAfterTapClose", idleOffAfterTapClose)
         settingsObj.put("idleOffAfterTapCloseLandscape", idleOffAfterTapCloseLandscape)
@@ -1033,6 +1047,8 @@ data class SmartIslandSettings(
                     .coerceIn(0, MAX_TRANSFER_EXPIRY_MINUTES),
                 idleWidgetsEnabled = obj.optBoolean("idleWidgetsEnabled", defaults.idleWidgetsEnabled),
                 idleEyesEnabled = obj.optBoolean("idleEyesEnabled", defaults.idleEyesEnabled),
+                unreadReminderEnabled = obj.optBoolean("unreadReminderEnabled", defaults.unreadReminderEnabled),
+                pileupSummaryEnabled = obj.optBoolean("pileupSummaryEnabled", defaults.pileupSummaryEnabled),
                 idleWidgetsEnabledLandscape = obj.optBoolean(
                     "idleWidgetsEnabledLandscape",
                     obj.optBoolean("idleWidgetsEnabled", defaults.idleWidgetsEnabledLandscape)

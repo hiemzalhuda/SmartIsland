@@ -67,6 +67,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -235,12 +236,36 @@ fun IslandCollapsedContent(
         Box(contentAlignment = Alignment.Center) {
             when (mode) {
                 IslandMode.Notification -> {
-                    Box(
-                        modifier = Modifier
-                            .size(8.dp)
-                            .clip(CircleShape)
-                            .background(Color(settings.notificationDotColor))
-                    )
+                    // Fork hiemz: pile-up summary badge. The tracker already merges shade +
+                    // island cards and counts only messages/mail waiting to be read, so the
+                    // badge is the unread pile, not every notification on the island.
+                    val pileupTotal = if (settings.pileupSummaryEnabled) {
+                        val pileupEntries by com.agupta07505.smartisland.util.NotificationCountTracker.entries.collectAsState()
+                        com.agupta07505.smartisland.model.NotificationCounts.summarize(pileupEntries).total
+                    } else 0
+                    if (pileupTotal >= 2) {
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(Color(settings.notificationDotColor))
+                                .padding(horizontal = 5.dp, vertical = 1.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = com.agupta07505.smartisland.model.NotificationCounts.badgeText(pileupTotal),
+                                color = Color.White,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .size(8.dp)
+                                .clip(CircleShape)
+                                .background(Color(settings.notificationDotColor))
+                        )
+                    }
                 }
                 IslandMode.IncomingCall -> {
                     if (notification?.isCallRinging == true || notification?.isCallConnecting == true) {

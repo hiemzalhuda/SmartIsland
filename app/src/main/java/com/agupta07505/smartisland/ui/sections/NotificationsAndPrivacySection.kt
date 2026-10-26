@@ -37,6 +37,7 @@ import androidx.compose.material.icons.automirrored.rounded.VolumeUp
 import androidx.compose.material.icons.rounded.BluetoothConnected
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.DoNotDisturbOn
+import androidx.compose.material.icons.rounded.FormatListNumbered
 import androidx.compose.material.icons.rounded.OpenInFull
 import androidx.compose.material.icons.rounded.HourglassBottom
 import androidx.compose.material.icons.rounded.Lock
@@ -548,6 +549,26 @@ fun NotificationsAndPrivacySection(
                     icon = Icons.Rounded.VisibilityOff,
                     checked = settings.hideFromNotificationShade,
                     onCheckedChange = { scope.launch { repository.setHideFromNotificationShade(it) } }
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f))
+
+                ToggleRowItem(
+                    searchKey = "np.unread_reminder",
+                    title = stringResource(R.string.toggle_unread_reminder_title),
+                    subtitle = stringResource(R.string.toggle_unread_reminder_desc),
+                    icon = Icons.Rounded.NotificationsActive,
+                    checked = settings.unreadReminderEnabled,
+                    onCheckedChange = { scope.launch { repository.setUnreadReminderEnabled(it) } }
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f))
+
+                ToggleRowItem(
+                    searchKey = "np.pileup_summary",
+                    title = stringResource(R.string.toggle_pileup_summary_title),
+                    subtitle = stringResource(R.string.toggle_pileup_summary_desc),
+                    icon = Icons.Rounded.FormatListNumbered,
+                    checked = settings.pileupSummaryEnabled,
+                    onCheckedChange = { scope.launch { repository.setPileupSummaryEnabled(it) } }
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f))
 

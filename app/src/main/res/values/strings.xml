@@ -328,6 +328,10 @@
     <string name="toggle_quick_actions_desc">Show actionable buttons like Reply, Mark Read, and Dismiss in expanded card</string>
     <string name="toggle_mirror_only_title">Mirror Only (Hide from System Shade)</string>
     <string name="toggle_mirror_only_desc">Show notification only in Smart Island and hide from default notification shade</string>
+    <string name="toggle_unread_reminder_title">Unread Message Reminder</string>
+    <string name="toggle_unread_reminder_desc">Re-show a message or mail on the island once if it is still unread after 15 minutes, so it is not silently missed</string>
+    <string name="toggle_pileup_summary_title">Pile-up Summary Badge</string>
+    <string name="toggle_pileup_summary_desc">When 2 or more unread messages pile up, the collapsed pill shows the total unread count instead of just a dot</string>
     <string name="toggle_auto_hide_idle_title">Auto-Hide Pill When Idle</string>
     <string name="toggle_auto_hide_idle_desc">Hide the pill completely when there are no active alerts, music, or dynamic events</string>
     <string name="toggle_auto_hide_pill_title">Auto-Hide Pill After Inactivity</string>

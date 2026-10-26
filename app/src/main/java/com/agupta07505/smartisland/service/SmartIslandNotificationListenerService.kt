@@ -345,6 +345,11 @@ class SmartIslandNotificationListenerService : NotificationListenerService() {
     private val lastTimerShown = ConcurrentHashMap<String, Long>()
     private var recordingWatchdog: Job? = null
     private var transferExpiryJob: Job? = null
+    private var unreadReminderJob: Job? = null
+    /** Fork hiemz: first time a counted message/mail was seen still unread, by notification key. */
+    private val unreadFirstSeen = java.util.concurrent.ConcurrentHashMap<String, Long>()
+    /** Fork hiemz: keys already re-peeked once by the unread reminder. */
+    private val remindedKeys = java.util.concurrent.ConcurrentHashMap.newKeySet<String>()
     private val replyGraceUntil = ConcurrentHashMap<String, Long>()
 
     private fun startTransferExpirySweep() {
@@ -362,6 +367,59 @@ class SmartIslandNotificationListenerService : NotificationListenerService() {
                     clearSuppressed(key)
                     notificationRepository.removeNotification(key)
                 }
+            }
+        }
+    }
+
+    /**
+     * Fork hiemz: remember when each still-unread counted message/mail was first seen, and forget
+     * keys that left the pile (read, dismissed, or opened in their app).
+     */
+    private fun trackUnreadFirstSeen(entries: List<com.agupta07505.smartisland.model.CountEntry>) {
+        val now = System.currentTimeMillis()
+        val countedKeys = entries
+            .filter {
+                com.agupta07505.smartisland.model.NotificationCounts.isCounted(it) &&
+                    !com.agupta07505.smartisland.util.DemoEvents.isDemoKey(it.key)
+            }
+            .map { it.key }
+            .toSet()
+        for (key in countedKeys) unreadFirstSeen.putIfAbsent(key, now)
+        unreadFirstSeen.keys.retainAll(countedKeys)
+        remindedKeys.retainAll(countedKeys)
+    }
+
+    /**
+     * Fork hiemz: once a minute, re-peek the oldest counted message/mail that has been sitting
+     * unread for at least [UNREAD_REMINDER_AGE_MS]. At most one re-peek per sweep tick and one
+     * per notification, so a pile never spams the pill. The remove + re-post makes the island
+     * treat it as a fresh arrival (arrival pulse) without expanding the card.
+     */
+    private fun startUnreadReminderSweep() {
+        if (unreadReminderJob?.isActive == true) return
+        unreadReminderJob = serviceScope.launch {
+            while (true) {
+                delay(UNREAD_REMINDER_SWEEP_MS)
+                if (!currentSettings.enabled || !currentSettings.unreadReminderEnabled) continue
+                val now = System.currentTimeMillis()
+                val due = unreadFirstSeen.entries
+                    .filter { (key, firstSeen) ->
+                        key !in remindedKeys && now - firstSeen >= UNREAD_REMINDER_AGE_MS
+                    }
+                    .minByOrNull { it.value }
+                    ?: continue
+                val card = notificationRepository.notifications.value
+                    .find {
+                        it.key == due.key && it.mode == IslandMode.Notification &&
+                            !com.agupta07505.smartisland.util.DemoEvents.isDemoKey(it.key)
+                    }
+                    ?: continue
+                remindedKeys.add(due.key)
+                android.util.Log.d(TAG, "Unread reminder: re-peeking ${due.key}")
+                notificationRepository.removeNotification(due.key)
+                // Let the island recompose with the key gone, so the re-post reads as a new arrival.
+                delay(300L)
+                notificationRepository.postNotification(card)
             }
         }
     }
@@ -471,9 +529,9 @@ class SmartIslandNotificationListenerService : NotificationListenerService() {
                     category = it.category
                 )
             }
-        com.agupta07505.smartisland.util.NotificationCountTracker.update(
-            com.agupta07505.smartisland.model.NotificationCounts.merge(shade, island)
-        )
+        val merged = com.agupta07505.smartisland.model.NotificationCounts.merge(shade, island)
+        com.agupta07505.smartisland.util.NotificationCountTracker.update(merged)
+        trackUnreadFirstSeen(merged)
     }
 
     private fun StatusBarNotification.toCountEntry(): com.agupta07505.smartisland.model.CountEntry {
@@ -707,6 +765,7 @@ class SmartIslandNotificationListenerService : NotificationListenerService() {
         startVoipMonitor()
         startRecordingWatchdog()
         startTransferExpirySweep()
+        startUnreadReminderSweep()
         startMediaWatcher()
         runCatchingLogged(TAG, "onListenerConnected callback failed") {
             android.util.Log.d(TAG, "onListenerConnected")
@@ -2395,6 +2454,10 @@ class SmartIslandNotificationListenerService : NotificationListenerService() {
         private const val REPLY_GRACE_MS = 6000L
         private const val SOUND_DEBOUNCE_MS = 1200L
         private const val AUTO_EXPAND_DEBOUNCE_MS = 1500L
+        /** Fork hiemz: unread age before the first (and only) reminder re-peek. */
+        private const val UNREAD_REMINDER_AGE_MS = 15 * 60 * 1000L
+        /** Fork hiemz: how often the unread reminder sweep looks for due messages. */
+        private const val UNREAD_REMINDER_SWEEP_MS = 60_000L
 
         private val INITIAL_RESYNC_DELAYS_MS = longArrayOf(1_500L, 3_500L)
     }

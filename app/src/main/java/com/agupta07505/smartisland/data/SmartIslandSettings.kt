@@ -49,7 +49,10 @@ data class SmartIslandSettings(
     /** Open that calculator in a floating window (when the floating window is on in the gesture settings). */
     val utilityCalculatorFloating: Boolean = true,
     val welcomeDialogShown: Boolean = false,
-    val showOnLockScreen: Boolean = false,
+    // Fork hiemz: lock screen on by default (upstream default was false).
+    // Pill stays a pill; privacy stays AppIconOnly, so locked content is
+    // redacted to the app icon unless the user switches to FullContent.
+    val showOnLockScreen: Boolean = true,
     /**
      * Live cards (music, navigation, timers, recordings, downloads, live activities) of the app that is in the
      * foreground.

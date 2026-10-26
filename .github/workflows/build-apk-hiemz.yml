@@ -26,6 +26,12 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v3
 
+      # Upstream's gradlew is committed without the executable bit
+      # (mode 100644), which is why the first run failed with
+      # "./gradlew: Permission denied" — upstream's own build.yml chmods it.
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+
       - name: Build debug APK
         run: ./gradlew assembleDebug --stacktrace
 

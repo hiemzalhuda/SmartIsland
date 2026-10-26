@@ -377,6 +377,7 @@ fun IslandOverlayView(
         contentAlignment = Alignment.TopCenter
     ) {
         HiddenPillTouchTarget(settings, layout, cb, ui)
+        IdleDotVisual(settings, layout, ui)
 
         // Notch mode, collapsed: square top corners. The radius itself is read in the draw phase (IslandShellModifiers.kt).
         val squareTop = settings.enableNotchMode && !expanded

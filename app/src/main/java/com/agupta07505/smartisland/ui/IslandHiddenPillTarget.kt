@@ -7,6 +7,13 @@
 
 package com.agupta07505.smartisland.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -27,8 +34,8 @@ import com.agupta07505.smartisland.data.SmartIslandSettings
 
 /**
  * Invisible touch target over the pill's spot while the pill is hidden, so tapping the area reveals the pill (auto-
- * hide), brings back put-away idle cards, or opens the shortcuts. Fork hiemz: while the round idle dot is active it
- * also draws the dot itself (the pill is hidden by then), and a tap on it opens the widget island.
+ * hide), brings back put-away idle cards, or opens the shortcuts. Fork hiemz: while the round idle dot is active a
+ * tap on it opens the widget island instead (see [IdleDotVisual] for the dot itself).
  */
 @Composable
 internal fun HiddenPillTouchTarget(
@@ -80,18 +87,46 @@ internal fun HiddenPillTouchTarget(
                             cb.currentOnToggle()
                         }
                     }
+                }
+        )
+    }
+}
+
+/** Fork hiemz: the round idle dot itself, at the pill's spot. */
+@Composable
+internal fun IdleDotVisual(
+    settings: SmartIslandSettings,
+    layout: IslandLayout,
+    ui: IslandInteractionState
+) {
+    // Deliberately NOT gated by isHiding: the dot must stay composed while it fades/scales out, or its exit
+    // animation would be cut off when the pill comes back. The pill's own ~220 ms fade is the timing to match.
+    val dotActive = settings.roundIdleDot && ui.isIdleDot
+    AnimatedVisibility(
+        visible = dotActive,
+        enter = fadeIn(animationSpec = tween(DOT_ANIM_MS, easing = FastOutSlowInEasing)) +
+            scaleIn(initialScale = 0.5f, animationSpec = tween(DOT_ANIM_MS, easing = FastOutSlowInEasing)),
+        exit = fadeOut(animationSpec = tween(DOT_ANIM_MS, easing = FastOutSlowInEasing)) +
+            scaleOut(targetScale = 0.5f, animationSpec = tween(DOT_ANIM_MS, easing = FastOutSlowInEasing))
+    ) {
+        Box(
+            modifier = Modifier
+                .width(settings.width.dp)
+                .height(settings.height.dp)
+                .graphicsLayer {
+                    translationX = layout.collapsedMainOffset.toPx()
                 },
             contentAlignment = Alignment.Center
         ) {
-            if (dotActive) {
-                Box(
-                    modifier = Modifier
-                        .size(16.dp)
-                        .clip(CircleShape)
-                        .background(Color(settings.pillColor))
-                        .border(1.dp, Color.White.copy(alpha = 0.25f), CircleShape)
-                )
-            }
+            Box(
+                modifier = Modifier
+                    .size(16.dp)
+                    .clip(CircleShape)
+                    .background(Color(settings.pillColor))
+                    .border(1.dp, Color.White.copy(alpha = 0.25f), CircleShape)
+            )
         }
     }
 }
+
+private const val DOT_ANIM_MS = 220

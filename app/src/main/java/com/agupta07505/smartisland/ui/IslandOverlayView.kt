@@ -177,7 +177,7 @@ fun IslandOverlayView(
         notchMode = settings.enableNotchMode,
         screenWidthDp = screenWidth.value,
         animSpeed = settings.animationSpeed(isLandscape),
-        pillOnScreen = !((settings.hideWhenIdle && notifications.isEmpty()) || (settings.autoHidePill && ui.isAutoHidden))
+        pillOnScreen = !((settings.hideWhenIdle && notifications.isEmpty()) || (settings.autoHidePill && ui.isAutoHidden) || ui.isIdleDot)
     )
     @Suppress("NAME_SHADOWING")
     val settings = pillExit.frozenNow ?: settings
@@ -240,6 +240,7 @@ fun IslandOverlayView(
     val prewarmWanted = notifications.isNotEmpty() && com.agupta07505.smartisland.model.CardPrewarm.shouldPrewarm(activeMode, screenOn)
     var expandedHeight by rememberExpandedHeight(activeMode, notifications.isEmpty(), expanded, prewarmWanted)
     AutoHideEffects(expanded, notifications, selectedIndex, settings, ui)
+    IdleDotEffects(expanded, notifications, settings, ui)
 
     // The extra cutouts beside the pill keep the state they had when the widget island opened, until it is back in the cutout.
     val holdCutouts = com.agupta07505.smartisland.model.widgetIslandHoldsExpand(widgetIslandOpen, ui.widgetIslandShown)
@@ -262,6 +263,7 @@ fun IslandOverlayView(
         splitCardWidthDp = splitWidthEffective,
         expandedHeight = expandedHeight,
         isAutoHidden = ui.isAutoHidden,
+        isIdleDot = ui.isIdleDot,
         idleClosing = idleClosing,
         launcherOpen = appsLauncherOpen && expanded,
         context = context,

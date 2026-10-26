@@ -202,6 +202,34 @@ fun IdleWidgetsSection(
                 }
             }
 
+            // Fork hiemz: round idle dot. After 10 s with no notification the idle pill
+            // (eyes included, while they are on) shrinks to a round dot; a tap on the dot
+            // opens the widget island.
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Round idle dot",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = "10 seconds with no notification and the island becomes a round dot. Tap the dot to open the widgets (weather shows when it is enabled in the widget settings).",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Switch(
+                    checked = settings.roundIdleDot,
+                    onCheckedChange = { scope.launch { repository.setRoundIdleDot(it) } }
+                )
+            }
+
             if (anyEnabled) {
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f))
 

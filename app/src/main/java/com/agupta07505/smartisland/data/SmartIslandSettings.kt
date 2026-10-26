@@ -69,6 +69,8 @@ data class SmartIslandSettings(
     val hideWhenIdle: Boolean = false,
     val autoHidePill: Boolean = false,
     val autoHideTimeoutSeconds: Int = 5,
+    /** Fork hiemz: after 10 s with no notification the idle pill shrinks to a round dot; a tap opens the widgets. */
+    val roundIdleDot: Boolean = false,
     val showInLandscape: Boolean = true,
     val autoExpandOnNotification: Boolean = true,
     /** False: nothing opens the island by itself while the phone is locked (cards still show in the pill). */
@@ -507,6 +509,7 @@ data class SmartIslandSettings(
         settingsObj.put("hideWhenIdle", hideWhenIdle)
         settingsObj.put("autoHidePill", autoHidePill)
         settingsObj.put("autoHideTimeoutSeconds", autoHideTimeoutSeconds)
+        settingsObj.put("roundIdleDot", roundIdleDot)
         settingsObj.put("showInLandscape", showInLandscape)
         settingsObj.put("autoExpandOnNotification", autoExpandOnNotification)
         settingsObj.put("autoExpandOnLockScreen", autoExpandOnLockScreen)
@@ -950,6 +953,7 @@ data class SmartIslandSettings(
                 hideWhenIdle = obj.optBoolean("hideWhenIdle", defaults.hideWhenIdle),
                 autoHidePill = obj.optBoolean("autoHidePill", defaults.autoHidePill),
                 autoHideTimeoutSeconds = obj.optInt("autoHideTimeoutSeconds", defaults.autoHideTimeoutSeconds).coerceIn(1, 120),
+                roundIdleDot = obj.optBoolean("roundIdleDot", defaults.roundIdleDot),
                 showInLandscape = obj.optBoolean("showInLandscape", defaults.showInLandscape),
                 autoExpandOnNotification = obj.optBoolean("autoExpandOnNotification", defaults.autoExpandOnNotification),
                 autoExpandOnLockScreen = obj.optBoolean("autoExpandOnLockScreen", defaults.autoExpandOnLockScreen),

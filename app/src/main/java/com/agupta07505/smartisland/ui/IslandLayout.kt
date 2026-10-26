@@ -250,6 +250,8 @@ internal fun rememberIslandLayout(
     splitCardWidthDp: Float,
     expandedHeight: Dp,
     isAutoHidden: Boolean,
+    /** Fork hiemz: the idle pill has shrunk to the round dot; the pill hides like it does for auto-hide. */
+    isIdleDot: Boolean = false,
     /**
      * Step 1 of the idle-circle close is running (an expanded island closing with the secondary merge): the pill
      * stays until it is over.
@@ -396,7 +398,7 @@ internal fun rememberIslandLayout(
         else (expandedTopOffsetBase - LAUNCHER_EXPANDED_LIFT_DP.dp).coerceAtLeast(0.dp)
     } else expandedTopOffsetBase
     val isIdleHiding = settings.hideWhenIdle && notifications.isEmpty()
-    val isHiding = (isIdleHiding || (settings.autoHidePill && isAutoHidden))
+    val isHiding = (isIdleHiding || (settings.autoHidePill && isAutoHidden) || isIdleDot)
     val hidingAlphaState = animateFloatAsState(
         targetValue = if (isHiding) 0f else 1f,
         animationSpec = tween(

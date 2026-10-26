@@ -178,6 +178,8 @@ internal class IslandInteractionState {
     }
 
     var isAutoHidden by mutableStateOf(false)
+    /** Fork hiemz: the idle pill has shrunk to the round dot (10 s with no notification, setting on). */
+    var isIdleDot by mutableStateOf(false)
     var userInteractionTimestamp by mutableLongStateOf(System.currentTimeMillis())
 
     fun touch() {

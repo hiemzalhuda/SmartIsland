@@ -13,6 +13,34 @@ import com.agupta07505.smartisland.data.SmartIslandSettings
 import com.agupta07505.smartisland.model.IslandNotification
 
 /**
+ * Fork hiemz round idle dot: once the island has sat idle (no cards, collapsed, widget island closed) for
+ * [IDLE_DOT_TIMEOUT_MS] with the setting on, the pill shrinks to a round dot ([IslandInteractionState.isIdleDot]).
+ * Any card, expansion, widget island or touch restarts the wait; the dot itself is drawn by
+ * [HiddenPillTouchTarget], and tapping it opens the widget island.
+ */
+@Composable
+internal fun IdleDotEffects(
+    expanded: Boolean,
+    notifications: List<IslandNotification>,
+    settings: SmartIslandSettings,
+    ui: IslandInteractionState
+) {
+    LaunchedEffect(
+        expanded, settings.roundIdleDot, ui.widgetIslandOpen,
+        notifications.isEmpty(), ui.userInteractionTimestamp
+    ) {
+        if (expanded || ui.widgetIslandOpen || !settings.roundIdleDot || notifications.isNotEmpty()) {
+            ui.isIdleDot = false
+            return@LaunchedEffect
+        }
+        kotlinx.coroutines.delay(IDLE_DOT_TIMEOUT_MS)
+        ui.isIdleDot = true
+    }
+}
+
+private const val IDLE_DOT_TIMEOUT_MS = 10_000L
+
+/**
  * Auto-hide of the collapsed pill: any change of cards or selection counts as a touch, and when the pill stays
  * collapsed for the configured time with auto-hide on, [IslandInteractionState.isAutoHidden] turns on.
  */

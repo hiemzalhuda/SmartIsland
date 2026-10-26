@@ -83,6 +83,7 @@ class SmartIslandSettingsRepository(private val context: Context) {
         val HideWhenIdle = booleanPreferencesKey("hide_when_idle")
         val AutoHidePill = booleanPreferencesKey("auto_hide_pill")
         val AutoHideTimeoutSeconds = intPreferencesKey("auto_hide_timeout_seconds")
+        val RoundIdleDot = booleanPreferencesKey("round_idle_dot")
         val ShowInLandscape = booleanPreferencesKey("show_in_landscape")
         val AutoExpandOnNotification = booleanPreferencesKey("auto_expand_on_notification")
         val AutoExpandOnLockScreen = booleanPreferencesKey("auto_expand_on_lock_screen")
@@ -381,6 +382,7 @@ class SmartIslandSettingsRepository(private val context: Context) {
                 hideWhenIdle = prefs[Keys.HideWhenIdle] ?: defaults.hideWhenIdle,
                 autoHidePill = prefs[Keys.AutoHidePill] ?: defaults.autoHidePill,
                 autoHideTimeoutSeconds = prefs[Keys.AutoHideTimeoutSeconds] ?: defaults.autoHideTimeoutSeconds,
+                roundIdleDot = prefs[Keys.RoundIdleDot] ?: defaults.roundIdleDot,
                 showInLandscape = prefs[Keys.ShowInLandscape] ?: defaults.showInLandscape,
                 autoExpandOnNotification = prefs[Keys.AutoExpandOnNotification] ?: defaults.autoExpandOnNotification,
                 autoExpandOnLockScreen = prefs[Keys.AutoExpandOnLockScreen] ?: defaults.autoExpandOnLockScreen,
@@ -889,6 +891,9 @@ class SmartIslandSettingsRepository(private val context: Context) {
     }
     suspend fun setAutoHidePill(value: Boolean) = editSafely {
         it[Keys.AutoHidePill] = value
+    }
+    suspend fun setRoundIdleDot(value: Boolean) = editSafely {
+        it[Keys.RoundIdleDot] = value
     }
     suspend fun setAutoHideTimeoutSeconds(value: Int) = editSafely {
         it[Keys.AutoHideTimeoutSeconds] = value.coerceIn(1, 120)
@@ -1474,6 +1479,7 @@ class SmartIslandSettingsRepository(private val context: Context) {
         prefs[Keys.HideWhenIdle] = settings.hideWhenIdle
         prefs[Keys.AutoHidePill] = settings.autoHidePill
         prefs[Keys.AutoHideTimeoutSeconds] = settings.autoHideTimeoutSeconds.coerceIn(1, 120)
+        prefs[Keys.RoundIdleDot] = settings.roundIdleDot
         prefs[Keys.ShowInLandscape] = settings.showInLandscape
         prefs[Keys.AutoExpandOnNotification] = settings.autoExpandOnNotification
         prefs[Keys.AutoExpandOnLockScreen] = settings.autoExpandOnLockScreen
